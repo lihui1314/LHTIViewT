@@ -8,7 +8,7 @@
 
 #import "LHTIView.h"
 #import <CoreText/CoreText.h>
-
+static NSString* const LHTruncationReplacementChar = @"\u2026";
 #define MinDurationTime 0.1f
 @implementation LHTIView{
     LHHighlight *_highlight;
@@ -21,9 +21,18 @@
     return self;
 }
 -(void)setCoreTextData:(LHCoreTextData *)coreTextData{
-    [coreTextData lh_ctframeParser];//解析
+    [coreTextData lh_ctframeParserWithFixedHight:self.frame.size.height];//解析
     _coreTextData = coreTextData;
-    self.frame = CGRectMake(self.frame.origin.x, self.frame.origin.y, self.bounds.size.width, self.coreTextData.height);
+    if (self.frame.size.height==0) {
+          self.frame = CGRectMake(self.frame.origin.x, self.frame.origin.y, self.bounds.size.width, self.coreTextData.height);
+    }else{
+        [self setNeedsDisplay];
+    }
+}
+
+-(void)setNumberOfLines:(NSInteger)numberOfLines{
+    _numberOfLines = numberOfLines;
+    [self setNeedsDisplay];
 }
 -(void)drawRect:(CGRect)rect{
 //    NSLog(@"2222222222222");
@@ -34,15 +43,68 @@
     CGContextTranslateCTM(context, 0, self.bounds.size.height);
     CGContextScaleCTM(context, 1.0, -1.0);
      [self lh_drawHighlightWithRect:rect];
-    CTFrameDraw(self.coreTextData.ctFrame, context);
+     [self lh_drawCoreText:context];
    
+    
+}
 
+-(void)lh_drawCoreText:(CGContextRef)context{
+    CFRange lastLineRange = CFRangeMake(0, 0);
+    if (_numberOfLines>0) {
+        CFArrayRef lines = CTFrameGetLines(self.coreTextData.ctFrame);
+        NSInteger numberOfLines = _numberOfLines > 0 ? MIN(CFArrayGetCount(lines), _numberOfLines) : CFArrayGetCount(lines);
+        CGPoint lineOrigins[numberOfLines];
+        CTFrameGetLineOrigins(self.coreTextData.ctFrame, CFRangeMake(0, 0), lineOrigins);
+        for (CFIndex index = 0; index<numberOfLines; index++) {
+            CGPoint originPoint = lineOrigins[index];
+            CGContextSetTextPosition(context, originPoint.x, originPoint.y);
+            CTLineRef line = CFArrayGetValueAtIndex(lines, index);
+            BOOL shouldDrawLine = YES;
+            
+            if (index == numberOfLines-1) {
+                lastLineRange = CTLineGetStringRange(line);
+                if (lastLineRange.location+lastLineRange.length<self.coreTextData.mutaAttStr.length) {
+                    CTLineTruncationType lineTrunCationtype = kCTLineTruncationEnd;
+                    NSInteger truncationAttributePosition = lastLineRange.location+lastLineRange.length-1;
+                    NSDictionary*attsDic = [self.coreTextData.mutaAttStr attributesAtIndex:truncationAttributePosition effectiveRange:NULL];
+                    
+                    NSAttributedString *tokenString = [[NSAttributedString alloc]initWithString:LHTruncationReplacementChar attributes:attsDic];
+                    CTLineRef truncationToken = CTLineCreateWithAttributedString((CFAttributedStringRef)tokenString);
+                    
+                    NSMutableAttributedString *trunCationSting = [[self.coreTextData.mutaAttStr attributedSubstringFromRange:NSMakeRange(lastLineRange.location, lastLineRange.length)] mutableCopy];
+                    if (lastLineRange.length>0) {
+                        [trunCationSting deleteCharactersInRange:NSMakeRange(lastLineRange.length-1, 1)];
+                    }
+                    [trunCationSting appendAttributedString:tokenString];
+                    CTLineRef truncationLine = CTLineCreateWithAttributedString((CFAttributedStringRef)trunCationSting);
+                    
+                    CTLineRef truncatedLine = CTLineCreateTruncatedLine(truncationLine, self.frame.size.width, lineTrunCationtype, truncationToken);
+                    CFRelease(truncationLine);
+                    CFRelease(truncationToken);
+                    CTLineDraw(truncatedLine, context);
+                    CFRelease(truncatedLine);
+                    shouldDrawLine = NO;
+                }
+            }
+            if (shouldDrawLine) {
+                CTLineDraw(line, context);
+            }
+        }
+        
+    }else{
+         CTFrameDraw(self.coreTextData.ctFrame, context);
+    }
     if (self.coreTextData.imageDataArray.count>0) {
         for (LHImageData*imageData in self.coreTextData.imageDataArray) {
-            CGContextDrawImage(context, imageData.position, imageData.image.CGImage);
+            if (lastLineRange.location&&lastLineRange.length>0) {
+                if (imageData.loction<(lastLineRange.location+lastLineRange.length)) {
+                      CGContextDrawImage(context, imageData.position, imageData.image.CGImage);
+                }
+            }else{
+                CGContextDrawImage(context, imageData.position, imageData.image.CGImage);
+            }
         }
     }
-    
 }
 
 -(void)lh_normDraw{
@@ -90,7 +152,7 @@
     }
     
     NSRange highlightRange;
-    _highlight = [self.coreTextData.muteAttStr lh_getHighlightWithLoctionIndex:index andRange:&highlightRange];
+    _highlight = [self.coreTextData.mutaAttStr lh_getHighlightWithLoctionIndex:index andRange:&highlightRange];
     _highlightRange = highlightRange;
 //    NSLog(@"index->%ld",index);
     if (_highlight.tapBackgroundColor) {
@@ -136,12 +198,12 @@
     }
     
     NSRange highlightRange;
-    LHHighlight*high = [self.coreTextData.muteAttStr lh_getHighlightWithLoctionIndex:index andRange:&highlightRange];
+    LHHighlight*high = [self.coreTextData.mutaAttStr lh_getHighlightWithLoctionIndex:index andRange:&highlightRange];
     if (high!=_highlight) {
         return;
     }
     if (_highlight) {
-        _highlight.tapAction(highlightRange,  self.coreTextData.muteAttStr.string,_highlight.userInfo);
+        _highlight.tapAction(highlightRange,  self.coreTextData.mutaAttStr.string,_highlight.userInfo);
     }
         _imageData = nil;
     

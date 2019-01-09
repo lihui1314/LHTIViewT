@@ -10,11 +10,11 @@
 #import <CoreText/CoreText.h>
 #import "LHImageData.h"
 @interface LHCoreTextData : NSObject
-@property(nonatomic,strong)NSMutableAttributedString * muteAttStr;
+@property(nonatomic,strong)NSMutableAttributedString * mutaAttStr;
 @property(nonatomic,strong)NSMutableArray*imageDataArray;
 @property(nonatomic,assign)CGFloat height;
 
 @property(nonatomic,assign)CTFrameRef ctFrame;
 -(instancetype)initWithWidth:(CGFloat)width;
--(void)lh_ctframeParser;
+-(void)lh_ctframeParserWithFixedHight:(CGFloat)height;
 @end

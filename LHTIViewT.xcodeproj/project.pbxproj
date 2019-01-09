@@ -29,6 +29,7 @@
 		9C41EF9121CB346E00E9F78E /* LHTableViewVC.xib in Resources */ = {isa = PBXBuildFile; fileRef = 9C41EF8F21CB346E00E9F78E /* LHTableViewVC.xib */; };
 		9C41EF9421CB350000E9F78E /* LHTableViewCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 9C41EF9321CB350000E9F78E /* LHTableViewCell.m */; };
 		9C41EF9721CB444400E9F78E /* LHTestTableViewTextModel.m in Sources */ = {isa = PBXBuildFile; fileRef = 9C41EF9621CB444400E9F78E /* LHTestTableViewTextModel.m */; };
+		9CA38EEF21E44B760050D6F9 /* LHbaseTool.m in Sources */ = {isa = PBXBuildFile; fileRef = 9CA38EEE21E44B760050D6F9 /* LHbaseTool.m */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -90,6 +91,8 @@
 		9C41EF9321CB350000E9F78E /* LHTableViewCell.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = LHTableViewCell.m; sourceTree = "<group>"; };
 		9C41EF9521CB444400E9F78E /* LHTestTableViewTextModel.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = LHTestTableViewTextModel.h; sourceTree = "<group>"; };
 		9C41EF9621CB444400E9F78E /* LHTestTableViewTextModel.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = LHTestTableViewTextModel.m; sourceTree = "<group>"; };
+		9CA38EED21E44B760050D6F9 /* LHbaseTool.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = LHbaseTool.h; sourceTree = "<group>"; };
+		9CA38EEE21E44B760050D6F9 /* LHbaseTool.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = LHbaseTool.m; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -216,6 +219,8 @@
 		9C41EF7021C2098000E9F78E /* Base */ = {
 			isa = PBXGroup;
 			children = (
+				9CA38EED21E44B760050D6F9 /* LHbaseTool.h */,
+				9CA38EEE21E44B760050D6F9 /* LHbaseTool.m */,
 			);
 			path = Base;
 			sourceTree = "<group>";
@@ -374,6 +379,7 @@
 			files = (
 				9C41EF2921BF95BC00E9F78E /* ViewController.m in Sources */,
 				9C41EF5921BF95E700E9F78E /* LHTIView.m in Sources */,
+				9CA38EEF21E44B760050D6F9 /* LHbaseTool.m in Sources */,
 				9C41EF8421C695D800E9F78E /* LHViewController.m in Sources */,
 				9C41EF7B21C5396F00E9F78E /* NSMutableAttributedString+Cate.m in Sources */,
 				9C41EF3421BF95BC00E9F78E /* main.m in Sources */,

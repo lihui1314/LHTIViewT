@@ -20,7 +20,8 @@
 }
 
 -(void)lh_setUI{
-    LHTIView*v = [[LHTIView alloc]initWithFrame:CGRectMake(CellPadding, 0, LHTWidth, self.frame.size.height)];
+    LHTIView*v = [[LHTIView alloc]initWithFrame:CGRectMake(CellPadding, 0, LHTWidth, 0)];
+    v.numberOfLines =0;
     v.delegate  = self;
     _displayView = v;
 }

@@ -104,7 +104,7 @@
     imageData.loction = 7;
 //    imageData.imageName = @"pic.jpg";
     
-    coreTextData.muteAttStr = muteAtt;
+    coreTextData.mutaAttStr = muteAtt;
 //    coreTextData.imageDataArray = [NSMutableArray arrayWithObjects:imageData, nil];
     view.coreTextData = coreTextData;
     

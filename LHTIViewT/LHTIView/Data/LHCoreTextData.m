@@ -7,10 +7,12 @@
 //
 
 #import "LHCoreTextData.h"
+#import "LHbaseTool.h"
 @implementation LHCoreTextData{
     CGFloat _width;
     BOOL _havePraser; //是否解析过
-    NSMutableAttributedString *_previousMuteStr;//前一个str
+    NSMutableAttributedString *_previousMutaStr;//前一个str
+    CGFloat _fixedHeight; //固定高度
 }
 -(instancetype)initWithWidth:(CGFloat)width{
     self = [super init];
@@ -25,21 +27,21 @@
 //    [self lh_calculateImagePosition];
 }
 -(void)setMuteAttStr:(NSMutableAttributedString *)muteAttStr{
-    _muteAttStr = muteAttStr;
+    _mutaAttStr = muteAttStr;
 //    [self lh_ctf];
 }
--(void)lh_ctf{
-    if (!_muteAttStr) {
+-(void)lh_ctfWithFixedHight:(CGFloat)height{
+    if (!_mutaAttStr) {
         return;
     }
-    CGFloat h = [self sizeLabelToFit:self.muteAttStr width:_width height:MAXFLOAT];
-    self.height = h;
+    CGFloat fh = height>0?height:[LHbaseTool sizeLabelToFit:self.mutaAttStr width:_width height:MAXFLOAT];
+    self.height = fh;
     //绘制区域
     CGMutablePathRef path = CGPathCreateMutable();
-    CGPathAddRect(path, NULL, CGRectMake(0, 0, _width  , h));
+    CGPathAddRect(path, NULL, CGRectMake(0, 0, _width  , fh));
     
     //设置CTFram
-    CTFramesetterRef ctFrameSetting = CTFramesetterCreateWithAttributedString((CFAttributedStringRef)self.muteAttStr);
+    CTFramesetterRef ctFrameSetting = CTFramesetterCreateWithAttributedString((CFAttributedStringRef)self.mutaAttStr);
     CTFrameRef ctframe = CTFramesetterCreateFrame(ctFrameSetting, CFRangeMake(0, 0), path, NULL);
     self.ctFrame = ctframe;
     
@@ -49,16 +51,16 @@
     CFRelease(ctframe);
 }
 
-//高度计算
--(CGFloat)sizeLabelToFit:(NSAttributedString *)aString width:(CGFloat)width height:(CGFloat)height {
-    CTFramesetterRef ctFrameSetterRef = CTFramesetterCreateWithAttributedString((CFAttributedStringRef)aString);
-    //获取要绘制的区域信息
-    CGSize restrictSize = CGSizeMake(width, CGFLOAT_MAX);
-    CGSize coreTextSize = CTFramesetterSuggestFrameSizeWithConstraints(ctFrameSetterRef, CFRangeMake(0, 0), NULL, restrictSize, NULL);
-    CGFloat textHeight = coreTextSize.height;
-    return textHeight;
-    
-}
+////高度计算
+//-(CGFloat)sizeLabelToFit:(NSAttributedString *)aString width:(CGFloat)width height:(CGFloat)height {
+//    CTFramesetterRef ctFrameSetterRef = CTFramesetterCreateWithAttributedString((CFAttributedStringRef)aString);
+//    //获取要绘制的区域信息
+//    CGSize restrictSize = CGSizeMake(width, CGFLOAT_MAX);
+//    CGSize coreTextSize = CTFramesetterSuggestFrameSizeWithConstraints(ctFrameSetterRef, CFRangeMake(0, 0), NULL, restrictSize, NULL);
+//    CGFloat textHeight = coreTextSize.height;
+//    return textHeight;
+//    
+//}
 
 //图片位置
 -(void)lh_calculateImagePosition{
@@ -116,28 +118,31 @@
     _ctFrame = ctFrame;
 }
 
+
 /**
- 解析成CTFrame并计算图片位置。
+ 解析并计算高度
+
+ @param height height>0 为固定高度； height = 0 为自适应高度
  */
--(void)lh_ctframeParser{
-    if (_previousMuteStr != _muteAttStr||(_previousMuteStr.length!=_muteAttStr.length)) {
+-(void)lh_ctframeParserWithFixedHight:(CGFloat)height{
+    if (_previousMutaStr != _mutaAttStr||(_previousMutaStr.length!=_mutaAttStr.length)||_fixedHeight !=height) {
         _havePraser = NO;
     }
     if (_havePraser==YES ) {
         return;
     }
-    if (self.muteAttStr) {
+    if (self.mutaAttStr) {
         for (int i = 0; i<_imageDataArray.count; i++) {
             LHImageData*imageData = _imageDataArray[i];
-            [self.muteAttStr insertAttributedString:imageData.imageAttStr atIndex:imageData.loction];
+            [self.mutaAttStr insertAttributedString:imageData.imageAttStr atIndex:imageData.loction];
         }
     }
-    [self lh_ctf];
+    [self lh_ctfWithFixedHight:height];
     if (_imageDataArray.count>0) {
         [self lh_calculateImagePosition];
     }
     _havePraser = YES;
-    _previousMuteStr = _muteAttStr;
+    _previousMutaStr = _mutaAttStr;
 }
 
 @end

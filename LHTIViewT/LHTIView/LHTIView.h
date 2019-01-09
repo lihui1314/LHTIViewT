@@ -19,5 +19,5 @@
 //@property(nonatomic,strong)NSMutableAttributedString* attStr;
 @property(nonatomic,strong)LHCoreTextData*coreTextData;
 @property(nonatomic,weak)id<LHTIViewDelegate>delegate;
-
+@property(nonatomic,assign)NSInteger numberOfLines;
 @end

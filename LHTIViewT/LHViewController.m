@@ -31,9 +31,9 @@
                           NSFontAttributeName:font
                           };
     NSMutableAttributedString*muteStr = [[NSMutableAttributedString alloc]initWithString:@ "秋天，无论在什么地方的秋天，总是好的；可是啊，北国的秋，却特别地来得清，来得静，来得悲凉。我的不远千里，要从杭州赶上青岛，更要从青岛赶上北平来的理由，也不过想饱尝一尝这“秋”，这故都的秋味。\n江南，秋当然也是有的，但草木凋得慢，空气来得润，天的颜色显得淡，并且又时常多雨而少风；一个人夹在苏州上海杭州，或厦门香港广州的市民中间，混混沌沌地过去，只能感到一点点清凉，秋的味，秋的色，秋的意境与姿态，总看不饱，尝不透，赏玩不到十足。秋并不是名花，也并不是美酒，那一种半开、半醉的状态，在领略秋的过程上，是不合适的" attributes:atts];
-    //hilight
+    //hilight 给指定字段加上点击事件
     LHHighlight*hightlight = [[LHHighlight alloc]init];
-    hightlight.tapBackgroundColor = [UIColor lightGrayColor];
+    hightlight.tapBackgroundColor = [UIColor lightGrayColor];//高亮背景
     hightlight.userInfo = @{@"name":@"{3,24}"};
     hightlight.tapAction = ^(NSRange rang, id userInfo, NSString *str) {
         [self lh_arlert:userInfo[@"name"]];
@@ -51,8 +51,8 @@
     imageData.imageInfo = @{@"name":@"pic.jpg"};
     
     coreData.imageDataArray = [NSMutableArray arrayWithObjects:imageData, nil];
-    coreData.muteAttStr = muteStr;
-    [coreData lh_ctframeParser];
+    coreData.mutaAttStr = muteStr;
+    [coreData lh_ctframeParserWithFixedHight:0];
     view.coreTextData = coreData;
     view.delegate = self;
     view.backgroundColor = [UIColor whiteColor];
